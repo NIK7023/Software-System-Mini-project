@@ -10,7 +10,7 @@ struct student
     char username[20];
     char password[20];
     int id;
-    bool active;
+    int active;
     char name[20];
-    int course_enrolled[30];
+    char course_enrolled[10][30];       //can enroll in 10 course
 };
