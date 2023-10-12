@@ -12,3 +12,5 @@
 #include <fcntl.h>
 
 #include <sys/stat.h>
+
+#include "structures.h"
