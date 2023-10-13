@@ -43,29 +43,23 @@ int main(int argc, char** argv)
 	{
 		memset(readbuff,0,sizeof(readbuff));
 		read(server_fd,readbuff,sizeof(readbuff));
-		//sleep(3);
-		write(1,readbuff,sizeof(readbuff));
-		//sleep(3);
-		memset(writebuff,0,sizeof(writebuff));
-		fflush(stdin);
-		int read_byte=read(0,writebuff,sizeof(writebuff));
-		writebuff[read_byte-1]='\0';
-
-
-
-		//sleep(3);
-//		if( strcmp(writebuff,"exit")==0 ) break;
-		write(server_fd,writebuff,strlen(writebuff));
-		//sleep(0.5);
-
-
+		if(readbuff[0]=='0')
+		{
+			write(1,(readbuff)+1,sizeof(readbuff)-1);//+1 to skip type
+		}
+		else
+		{
+			write(1,readbuff+1,sizeof(readbuff)-1);//+1 to skip type
+			memset(writebuff,0,sizeof(writebuff));
+			fflush(stdin);
+			int read_byte=read(0,writebuff,sizeof(writebuff));
+			writebuff[read_byte-1]='\0';
+		
+			if( strcmp(writebuff,"exit")==0 ) break;
+			write(server_fd,writebuff,strlen(writebuff));
+		}
 	}
 
-
-	// while(1)
-	// {
-	// 	read
-	// }
 
 
 close(server_fd);

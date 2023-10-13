@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 			close(server_fd);
 			printf("Client connected\n");
 
-			char menu[1024]="\n------------------Welcome to Academia------------------\nLogin as\n1.Admin\n2.Proffessor\n3.Student\nEnter Choice :";
+			char menu[1024]="1\n------------------Welcome to Academia------------------\nLogin as\n1.Admin\n2.Proffessor\n3.Student\nEnter Choice :";
 			write(client_socket_fd,menu,sizeof(menu));
 
 			char choice;		
