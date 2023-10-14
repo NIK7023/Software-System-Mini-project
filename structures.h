@@ -16,8 +16,8 @@ struct student
     int active;         //0 inactive 1 active
     char name[20];
     char email[20];
-    char age[3];
-    char course_enrolled[10][30];       //can enroll in 10 course
+    int age;
+    int course_enrolled[5];       //can enroll in 10 course
 };
 
 struct faculty
@@ -28,4 +28,5 @@ struct faculty
     char name[20];
     char email[20];
     int age;
+    int course[10];
 };
