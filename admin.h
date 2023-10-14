@@ -433,7 +433,7 @@ void modifystudent(int client_socket_fd)
         lseek(fd,-sizeof(struct student),SEEK_CUR);
         int lock_length = sizeof(struct student);
         struct flock write_lock = {F_WRLCK,SEEK_CUR,0,lock_length,getpid()};
-        lock_status=fcntl(fd,F_SETLKW,&read_lock);
+        lock_status=fcntl(fd,F_SETLKW,&write_lock);
         if(lock_status==-1) 
         {
             perror("Student file lock error:");
@@ -446,7 +446,7 @@ void modifystudent(int client_socket_fd)
         }
         //unlock
         write_lock.l_type=F_UNLCK;
-        lock_status=fcntl(fd,F_SETLKW,&read_lock);
+        lock_status=fcntl(fd,F_SETLKW,&write_lock);
 
         sprintf(buff,"0Name : %s\nEmail : %s\nAge : %d\n",s.name,s.email,s.age);
         write(client_socket_fd,buff,strlen(buff));
@@ -530,7 +530,7 @@ void modifyfaculty(int client_socket_fd)
         lseek(fd,-sizeof(struct faculty),SEEK_CUR);
         int lock_length = sizeof(struct faculty);
         struct flock write_lock = {F_WRLCK,SEEK_CUR,0,lock_length,getpid()};
-        lock_status=fcntl(fd,F_SETLKW,&read_lock);
+        lock_status=fcntl(fd,F_SETLKW,&write_lock);
         if(lock_status==-1) 
         {
             perror("faculty file lock error:");
@@ -543,7 +543,7 @@ void modifyfaculty(int client_socket_fd)
         }
         //unlock
         write_lock.l_type=F_UNLCK;
-        lock_status=fcntl(fd,F_SETLKW,&read_lock);
+        lock_status=fcntl(fd,F_SETLKW,&write_lock);
 
         sprintf(buff,"0Name : %s\nEmail : %s\nAge : %d\n",f.name,f.email,f.age);
         write(client_socket_fd,buff,strlen(buff));

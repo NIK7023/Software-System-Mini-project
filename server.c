@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 				case '2':	login=faculty_login(client_socket_fd);
 							if(login==true) printf("\nLogin Sucessfull\n");
 							else {	printf("\nInvalid username or password"); exit(0);}
-							 display_faculty_menu(client_socket_fd);
+							 //display_faculty_menu(client_socket_fd);
 					break;
 
 				case '3'	:login=student_login(client_socket_fd);

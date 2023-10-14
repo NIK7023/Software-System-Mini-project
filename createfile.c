@@ -24,14 +24,17 @@ int main()
 	int fd = open("count.txt",O_CREAT | O_RDWR, 0777);
 	int fd1 = open("student.txt",O_CREAT | O_RDWR, 0777);
 	int fd2 = open("faculty.txt",O_CREAT | O_RDWR, 0777);
+	int fd3 =open("course.txt",O_CREAT | O_RDWR, 0777);
 	if(fd==-1) perror("count.txt");
 	if(fd1==-1) perror("student.txt");
 	if(fd2==-1) perror("faculty.txt");
+	if(fd3==-1) perror("course.txt");
 
 	 int bytewrite=write(fd,&c,sizeof(struct count));
 	 if(bytewrite<0) perror("Error while writing in count.txt");
 	close(fd);
 	close(fd1);
 	close(fd2);
+	close(fd3);
 return 0;
 }

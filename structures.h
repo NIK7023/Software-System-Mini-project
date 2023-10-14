@@ -5,6 +5,7 @@ struct count
 {
     int student;
     int faculty;
+    int course;
 };
 
 
@@ -29,4 +30,17 @@ struct faculty
     char email[20];
     int age;
     int course[10];
+};
+
+
+struct course
+{
+    int id;
+    int faculty_id;
+    char faculty_name[20];
+    int active;
+    char name[20];
+    char dept[20];
+    int totalseats;     //Max No of enrollment
+    int enrollcount;    //No of student enrolled
 };
