@@ -50,4 +50,7 @@ struct studentcourse
 {
     int studentid;
     int courseid;
+    char coursename[20];
+    char facultyname[20];
+    char dept[20];
 };

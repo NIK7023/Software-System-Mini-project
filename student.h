@@ -122,7 +122,7 @@ void enroll_in_newcourse(int client_socket_fd, int studentid)
     // while (read(fd, &c, sizeof(struct course)) > 0)
     // {
         
-    //     if (c.active != 0)
+    //     if (c.active != -1)
     //     {
     //         memset(buff, 0, sizeof(buff));
     //         sprintf(buff,"0\ncourse ID : %d\tName : %s\t\tDpt : %s\t\tFaculty Name : %s\t\tAvailable Seats : %d", c.id, c.name, c.dept, c.faculty_name, c.totalseats - c.enrollcount);
@@ -190,6 +190,9 @@ void enroll_in_newcourse(int client_socket_fd, int studentid)
                         struct studentcourse temp;
                         temp.courseid=courseid;
                         temp.studentid=studentid;
+                        strcpy(temp.dept,c.dept);
+                        strcpy(temp.coursename,c.name);
+                        strcpy(temp.facultyname,c.faculty_name);
                         lseek(std_cou_fd,0,SEEK_END);
                         write(std_cou_fd,&temp,sizeof(struct studentcourse));
                         write(client_socket_fd,"0Enrolled in new course",strlen("0Enrolled in new course"));
