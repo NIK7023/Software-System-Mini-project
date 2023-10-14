@@ -42,13 +42,13 @@ bool student_login(int client_socket_fd)
     struct student s;
     int flag=0;
     int fd=open("student.txt",O_RDONLY);
-    // if(fd==-1)
-    // {
-    //     perror("Error in file opening:");
-    // }
-    while(read(fd,&s,sizeof(struct student)!=0))
+    if(fd==-1)
+    {
+        perror("Error in file opening:");
+    }
+    while(read(fd,&s,sizeof(struct student))>0)
     {   
-        write(1,&s.username,strlen(s.username)); 
+        //write(1,&s.username,strlen(s.username)); 
         //printf("%s\n",s.username);
         if(strcmp(s.username,username)==0) 
         { 
@@ -72,10 +72,11 @@ void display_student_menu(int client_socket_fd)
     char menu[1024]="1\n------------------Welcome student------------------\n1.View Courses\n2.\n3.\n7.Logout and exit\nEnter Choice :";
     
     char buff='0';
-    while(buff!='7') 
+    do
     {
         
         write(client_socket_fd,menu,sizeof(menu));
+        buff='0';
         read(client_socket_fd,&buff,sizeof(buff));
 
         switch (buff)
@@ -89,6 +90,6 @@ void display_student_menu(int client_socket_fd)
         default:
             break;
         }    
-    }
+    }while(buff!='7');
     
 }

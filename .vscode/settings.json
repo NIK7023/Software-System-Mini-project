@@ -3,6 +3,8 @@
         "types.h": "c",
         "file.h": "c",
         "socket.h": "c",
-        "structures.h": "c"
+        "structures.h": "c",
+        "string.h": "c",
+        "typeinfo": "c"
     }
 }

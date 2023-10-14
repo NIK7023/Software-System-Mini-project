@@ -13,7 +13,8 @@
 
 #include <sys/stat.h>
 #include "util.h"
-#include "structures.h"
+#include "faculty.h"
+
 
 /*
     username : admin
@@ -22,6 +23,8 @@
 void addstudent(int client_socket_fd);
 int getcount(char *file,char *type);
 void viewstudent(int client_socket_fd);
+void addfaculty(int client_socket_fd);
+void viewfaculty(int client_socket_fd);
 
 bool admin_login(int client_socket_fd)
 {
@@ -58,7 +61,7 @@ bool admin_login(int client_socket_fd)
 
 void display_admin_menu(int client_socket_fd)
 {
-    char menu[1024]="1\n------------------Welcome Admin------------------\n1.Add student\n2.View Student\n3.\n7.Logout and exit\nEnter Choice :";
+    char menu[1024]="1\n------------------Welcome Admin------------------\n1.Add student\n2.View Student\n3.Add Faculty\n4.View Faculty\n5.\n\n7.Logout and exit\nEnter Choice :";
     
     char buff='\0';
     do
@@ -73,6 +76,11 @@ void display_admin_menu(int client_socket_fd)
             break;
         
         case '2':   viewstudent(client_socket_fd);
+            break;
+        
+        case '3':   addfaculty(client_socket_fd);
+            break;
+        case '4':   viewfaculty(client_socket_fd);
             break;
         
         default:
@@ -217,6 +225,7 @@ void viewstudent(int client_socket_fd)
         }
         
     }
+    close(fd);
     memset(buff,0,sizeof(buff));
     if(flag==0) write(client_socket_fd,"0student not found",strlen("0student not found"));
     else{
@@ -226,4 +235,122 @@ void viewstudent(int client_socket_fd)
 
 
 
+}
+
+
+void addfaculty(int client_socket_fd)
+{
+    struct faculty f;
+    struct count c;
+	int fd = open("count.txt",O_RDWR);
+    if(fd==-1)
+    {
+        perror("Error in opeing file: ");
+        exit(0);
+    }
+	if(read(fd,&c,sizeof(struct count)) ==-1)
+    {
+        perror("Error in reading:");
+    }
+    c.faculty++;
+    lseek(fd,0,SEEK_SET);
+    if(write(fd,&c,sizeof(struct count)) ==-1)
+    {
+        perror("Error in reading:");
+    }
+
+    f.id=c.faculty;
+    close(fd);
+    fflush(stdout);
+    if(write(1, &f.id,sizeof(f.id))==-1) perror("id error");
+    sprintf(f.username,"%d",f.id);
+    fflush(stdout);
+    write(1,&f.username,sizeof(f.username));
+    strcpy(f.password,"password");
+
+
+    char buff[1024];
+    memset(buff,0,sizeof(buff));
+    write(client_socket_fd,"1Enter faculty Name:",sizeof("1Enter faculty Name:"));
+    read(client_socket_fd,buff,sizeof(buff));
+    buff[sizeof(f.name)-1]='\0';
+    strcpy(f.name,buff);
+
+    memset(buff,0,sizeof(buff));
+    write(client_socket_fd,"1Enter faculty Email:",sizeof("1Enter faculty email:"));
+    read(client_socket_fd,buff,sizeof(buff));
+    buff[sizeof(f.email)-1]='\0';
+    strcpy(f.email,buff);
+
+    memset(buff,0,sizeof(buff));
+    write(client_socket_fd,"1Enter faculty age:",sizeof("1Enter faculty age:"));
+    read(client_socket_fd,buff,sizeof(buff));
+    f.age=atoi(buff);
+
+    fd=open("faculty.txt",O_RDWR);
+    if(fd==-1)
+    {
+        perror("Error in opeing file: ");
+        exit(0);
+    }
+    lseek(fd,0,SEEK_END);
+    //while(read(fd,&s,sizeof(struct student))!=0);   
+    sprintf(buff,"0\nName : %s\nEmail : %s\nAge : %d\n",f.name,f.email,f.age);
+        write(client_socket_fd,buff,strlen(buff));
+    if(write(fd,&f,sizeof(struct faculty))==-1)
+    {
+        perror("Error in writing in file: ");
+        exit(0);
+    }
+    close(fd);
+    write(client_socket_fd,"0Faculty added successfully",sizeof("0Faculty added successfully"));   
+}
+
+
+
+
+void viewfaculty(int client_socket_fd)
+{
+    struct faculty f;
+    char buff[1024];
+    memset(buff,0,sizeof(buff));
+    write(client_socket_fd,"1Enter faculty ID:",strlen("1Enter faculty ID:"));
+    read(client_socket_fd,&buff,sizeof(buff));
+    write(1,buff,sizeof(buff));
+    int id=atoi(buff);
+    //write(1,&id,sizeof(id));
+
+    
+    //printf("ID=%d",id);
+    int fd=open("faculty.txt",O_RDONLY);
+    if(fd==-1)
+    {
+        perror("Error in file opening:");
+    }
+    int flag=0;
+    memset(buff,0,sizeof(buff));
+    lseek(fd,0,SEEK_SET);
+    while(read(fd,&f,sizeof(struct faculty))>0)
+    {
+        sprintf(buff,"0\nName : %s\nEmail : %s\nAge : %d",f.name,f.email,f.age);
+        // write(client_socket_fd,buff,strlen(buff));
+        write(1,buff,strlen(buff));
+        //write(1,&s.name,strlen(s.name));
+
+        if(f.id==id) 
+        { 
+            write(1,"faculty found",sizeof("faculty found"));
+            flag =1;
+            //close(fd);
+            break;
+        }
+        
+    }
+    close(fd);
+    memset(buff,0,sizeof(buff));
+    if(flag==0) write(client_socket_fd,"0faculty not found",strlen("0faculty not found"));
+    else{
+        sprintf(buff,"0Name : %s\nEmail : %s\nAge : %d\n",f.name,f.email,f.age);
+        write(client_socket_fd,buff,strlen(buff));
+    }
 }
