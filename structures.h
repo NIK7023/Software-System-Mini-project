@@ -12,3 +12,8 @@ struct student
     char age[3];
     char course_enrolled[10][30];       //can enroll in 10 course
 };
+struct count
+{
+    int student;
+    int faculty;
+};

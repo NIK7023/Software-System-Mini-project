@@ -39,24 +39,34 @@ int main(int argc, char** argv)
 	// write(server_fd,&choice,sizeof(choice));
 
 	char readbuff[1024],writebuff[1024];
+	
 	while(1)
 	{
 		memset(readbuff,0,sizeof(readbuff));
+		memset(writebuff,0,sizeof(writebuff));
 		read(server_fd,readbuff,sizeof(readbuff));
 		if(readbuff[0]=='0')
 		{
-			write(1,(readbuff)+1,sizeof(readbuff)-1);//+1 to skip type
+			fflush(stdout);
+			write(1,&readbuff[1],strlen(readbuff)-1);//+1 to skip type
+			fflush(stdout);
+			memset(readbuff,0,sizeof(readbuff));		
 		}
 		else
 		{
-			write(1,readbuff+1,sizeof(readbuff)-1);//+1 to skip type
+			fflush(stdout);
+			write(1,&readbuff[1],strlen(readbuff)-1);//+1 to skip type
+			fflush(stdout);
+			memset(readbuff,0,sizeof(readbuff));
 			memset(writebuff,0,sizeof(writebuff));
 			fflush(stdin);
 			int read_byte=read(0,writebuff,sizeof(writebuff));
+			fflush(stdin);
 			writebuff[read_byte-1]='\0';
 		
-			if( strcmp(writebuff,"exit")==0 ) break;
+			//eif( strcmp(writebuff,"exit")==0 ) break;
 			write(server_fd,writebuff,strlen(writebuff));
+			memset(writebuff,0,sizeof(writebuff));
 		}
 	}
 
@@ -66,3 +76,8 @@ close(server_fd);
 
 return 0;
 }
+
+
+
+
+//1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111

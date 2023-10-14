@@ -13,7 +13,9 @@
 
 #include <sys/stat.h>
 	
-#include "admin.h"
+// #include "admin.h"
+#include "student.h"
+
 int main(int argc, char** argv)
 {
 	int port=atoi(argv[1]);
@@ -70,15 +72,20 @@ int main(int argc, char** argv)
 				perror("client Read error:");
 				exit(0);
 			}
+			bool login;
 			switch(choice)
 			{
-				case '1':	bool login=admin_login(client_socket_fd);
+				case '1':	login=admin_login(client_socket_fd);
 							if(login==true) printf("\nLogin Sucessfull\n");
 							else {	printf("\nInvalid username or password"); exit(0);}
 							 display_admin_menu(client_socket_fd);
-							break;
+					break;
 
-				case '2':
+				case '3'	:login=student_login(client_socket_fd);
+							if(login==true) printf("\nLogin Sucessfull\n");
+							else {	printf("\nInvalid username or password"); exit(0);}
+							 display_student_menu(client_socket_fd);
+					break;
 
 			}
 
