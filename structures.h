@@ -44,3 +44,10 @@ struct course
     int totalseats;     //Max No of enrollment
     int enrollcount;    //No of student enrolled
 };
+
+
+struct studentcourse
+{
+    int studentid;
+    int courseid;
+};

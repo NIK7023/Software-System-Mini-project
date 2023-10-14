@@ -61,6 +61,7 @@ int main(int argc, char** argv)
 			memset(writebuff,0,sizeof(writebuff));
 			fflush(stdin);
 			int read_byte=read(0,writebuff,sizeof(writebuff));
+			//while (getchar()!='\n');			
 			fflush(stdin);
 			writebuff[read_byte-1]='\0';
 		

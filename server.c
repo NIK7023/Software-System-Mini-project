@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	printf("Listen\n");
 	struct sockaddr_in client_address;
 	int client_socket_fd;
-
+	fflush(stdout);
 	socklen_t client_address_len=sizeof(client_address);;
 	while(1)
 	{
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 				case '3'	:login=student_login(client_socket_fd);
 							if(login==true) printf("\nLogin Sucessfull\n");
 							else {	printf("\nInvalid username or password"); exit(0);}
-							 display_student_menu(client_socket_fd);
+							 //display_student_menu(client_socket_fd);
 					break;
 
 			}

@@ -121,7 +121,7 @@ void addcourse(int client_socket_fd,int facultyid,char *facultyname)
         int lock_status=fcntl(fd,F_SETLKW,&write_lock);
         if(lock_status==-1) 
         {
-            perror("Student file lock error:");
+            perror("count file lock error:");
             exit(0);
         }
 	if(read(fd,&c,sizeof(struct count)) ==-1)
@@ -234,8 +234,11 @@ void viewcourse(int client_socket_fd,int facultyid)
     int flag=0;
     while(read(fd,&c,sizeof(struct course))>0)
     {
+        if(c.active!=0)
+        {
         sprintf(buff,"\n0Name : %s\t\tDpt : %s\t\tTotal Seats : %d\t\tAvailable Seats : %d\n",c.name,c.dept,c.totalseats,c.totalseats-c.enrollcount);
         write(client_socket_fd,buff,strlen(buff));
+        }
         // if(c.id==id && c.faculty_id==facultyid ) 
         // { 
         //     write(1,"course found",sizeof("course found"));
