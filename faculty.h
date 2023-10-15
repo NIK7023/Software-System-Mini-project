@@ -262,7 +262,13 @@ void deletecourse(int client_socket_fd, int facultyid)
     write(client_socket_fd, "1Enter course ID to be deleted:", sizeof("1Enter course ID to be deleted:"));
     memset(buff, 0, sizeof(buff));
     read(client_socket_fd, buff, sizeof(buff));
+    write(1,buff,strlen(buff));
     int courseid = atoi(buff);
+    if(courseid==-1)
+    {
+        write(client_socket_fd,"0Invalid course id",strlen("0Invalid course id"));
+        return;
+    }
 
     // file open
     int fd = open("course.txt", O_RDWR);
@@ -271,8 +277,8 @@ void deletecourse(int client_socket_fd, int facultyid)
         perror("Error in file opening:");
     }
 
-    struct flock read_lock = {F_RDLCK, SEEK_SET, 0, 0, getpid()};
-    int lock_status = fcntl(fd, F_SETLKW, &read_lock);
+    struct flock write_lock = {F_WRLCK, SEEK_CUR, 0, 0, getpid()};
+    int lock_status = fcntl(fd, F_SETLKW, &write_lock);
     if (lock_status == -1)
     {
         perror(" file lock error:");
@@ -280,75 +286,79 @@ void deletecourse(int client_socket_fd, int facultyid)
     }
     struct course c;
     lseek(fd, 0, SEEK_SET);
-    int flag=0;
+    int flag = 0;
     while (read(fd, &c, sizeof(struct course)) > 0)
     {
-        if (c.faculty_id==facultyid && c.id==courseid )
+        if (c.faculty_id == facultyid && c.id == courseid)
         {
-            flag=1;
+       - write(1,&c.name,strlen(c.name));
+            flag = 1;
             break;
         }
     }
-    //read unlock
-    read_lock.l_type=F_UNLCK;
-    lock_status=fcntl(fd,F_SETLKW,&read_lock);
-    //write lock
-    lseek(fd,-sizeof(struct course),SEEK_CUR);
-    int lock_length = sizeof(struct course);
-    struct flock write_lock = {F_WRLCK,SEEK_CUR,0,lock_length,getpid()};
-    lock_status=fcntl(fd,F_SETLKW,&write_lock);
-    if(lock_status==-1) 
+    // read unlock
+    //  read_lock.l_type=F_UNLCK;
+    //  lock_status=fcntl(fd,F_SETLKW,&read_lock);
+    if (flag == 1)
     {
-        perror(" file lock error:");
-        exit(0);
-    }
-    c.active=-1;
-    if(write(fd,&c,sizeof(struct course))==-1)
-    {
-        perror("Error in writing in file: ");
-        exit(0);
-    }
-    //write unlock
-    write_lock.l_type=F_UNLCK;
-    lock_status=fcntl(fd,F_SETLKW,&write_lock);
-
-    //file open
-    int studentcourse_fd=open("studentcourse.txt",O_RDWR);
-    if(fd==-1)
-    {
-        perror("Error in file opening:");
-    }
-
-    
-    write_lock.l_type =F_WRLCK;
-    write_lock.l_whence = SEEK_CUR;
-    write_lock.l_start = 0;
-    write_lock.l_len = 0;
-    write_lock.l_pid = getpid();
-
-
-    lock_status=fcntl(studentcourse_fd,F_SETLKW,&write_lock);
-    if(lock_status==-1) 
-    {
-        perror(" file lock error:");
-        exit(0);
-    }
-    struct studentcourse sc;
-    lseek(studentcourse_fd,0,SEEK_SET);
-    while (read(studentcourse_fd, &sc, sizeof(struct studentcourse)) >0)
-    {    
-        if ( sc.courseid==courseid )
+         write(1,&c.name,strlen(c.name));
+        lseek(fd, -sizeof(struct course), SEEK_CUR);
+        c.active = -1;
+        if (write(fd, &c, sizeof(struct course)) == -1)
         {
-            lseek(studentcourse_fd,-sizeof(struct studentcourse),SEEK_CUR);
-            sc.courseid=-1;
-            write(studentcourse_fd, &sc, sizeof(struct studentcourse));
+            write(1,&c.name,strlen(c.name));
+            perror("Error in writing in file: ");
+            exit(0);
         }
+        else 
+         {
+            write(client_socket_fd,"0Course Deleted",strlen("0Course Deleted"));
+         }
+       // int writebyte= write(fd, &c, sizeof(struct course));
+        //sprintf()
+        //write(1,&writebyte,sizeof(writebyte));
+        
+        int studentcourse_fd = open("studentcourse.txt", O_RDWR);
+        if (fd == -1)
+        {
+            perror("Error in file opening:");
+        }
+
+        struct flock sc_write_lock = {F_WRLCK, SEEK_CUR, 0, 0, getpid()};
+        int lock_status = fcntl(studentcourse_fd, F_SETLKW, &sc_write_lock);
+        if (lock_status == -1)
+        {
+            perror(" file lock error:");
+            exit(0);
+        }
+        struct studentcourse sc;
+        lseek(studentcourse_fd, 0, SEEK_SET);
+        while (read(studentcourse_fd, &sc, sizeof(struct studentcourse)) > 0)
+        {
+            if (sc.courseid == courseid)
+            {
+                lseek(studentcourse_fd, -sizeof(struct studentcourse), SEEK_CUR);
+                sc.courseid = -1;
+                write(studentcourse_fd, &sc, sizeof(struct studentcourse));
+            }
+        }
+
+        sc_write_lock.l_type = F_UNLCK;
+        lock_status = fcntl(studentcourse_fd, F_SETLKW, &sc_write_lock);
+        close(studentcourse_fd);
+    }
+    else
+    {
+        write(client_socket_fd,"0No course with given course id fount",strlen("0No course with given course id fount"));
     }
 
-    write_lock.l_type=F_UNLCK;
-lock_status=fcntl(studentcourse_fd,F_SETLKW,&write_lock);
-//write(client_socket_fd,"0Course Deleted",strlen("0Course Deleted"));
+    // write unlock
+    write_lock.l_type = F_UNLCK;
+    lock_status = fcntl(fd, F_SETLKW, &write_lock);
 
-close(fd);
-close(studentcourse_fd);
+    // file open
+
+    // write(client_socket_fd,"0Course Deleted",strlen("0Course Deleted"));
+
+    close(fd);
 }

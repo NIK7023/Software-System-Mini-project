@@ -86,7 +86,7 @@ int main()
     struct course c;
     while (read(fd4,&c,sizeof(struct course))>0)
     {
-        printf("course ID : %d\tName : %s\t\tDpt : %s\t\tFaculty Name : %s\t\tAvailable Seats : %d\n", c.id, c.name, c.dept, c.faculty_name, c.totalseats - c.enrollcount);
+        printf("course ID : %d\tactive:%d\tName : %s\t\tDpt : %s\t\tFaculty Name : %s\t\tAvailable Seats : %d\n", c.id,c.active, c.name, c.dept, c.faculty_name, c.totalseats - c.enrollcount);
     }
 
 

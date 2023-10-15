@@ -63,6 +63,7 @@ int main(int argc, char** argv)
 			int read_byte=read(0,writebuff,sizeof(writebuff));
 			//while (getchar()!='\n');			
 			fflush(stdin);
+			fflush(stdout);
 			writebuff[read_byte-1]='\0';
 		
 			//eif( strcmp(writebuff,"exit")==0 ) break;
